@@ -8,16 +8,20 @@ temp_file="${temp_dir}/test.ts"
 rm -rf "${temp_dir}"
 mkdir "${temp_dir}"
 
+function run_tsc() {
+    "$(yarn bin)/tsc" $@
+}
+
 rm -rf ./dist && \
 echo "Installing typescript version: ${version}" && \
-yarn add -D "typescript/@${version}" && \
-yarn run tsc --noEmitOnError && \
+yarn --silent add -D "typescript/@${version}" && \
+run_tsc --noEmitOnError && \
 echo "Writing test file to: ${temp_file}" && \
 echo 'import * as hWs from "../dist";' > "${temp_file}" && \
 cd "${temp_dir}" && \
 echo "Starting compilatin of dummy project in $(pwd)" && \
-yarn run tsc --init && \
-yarn run tsc --noEmitOnError
+run_tsc --init && \
+run_tsc --noEmitOnError
 
 node "test.js"
 exit="${?}"
